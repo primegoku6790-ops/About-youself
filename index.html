@@ -1,0 +1,161 @@
+
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>तुम अपने बारे में कितना जानते हो?</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #10152f, #31246b, #111827);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    width: 100%;
+    max-width: 420px;
+    background: rgba(255,255,255,0.10);
+    padding: 25px;
+    border-radius: 22px;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+h1 {
+    font-size: 27px;
+    margin-bottom: 10px;
+}
+
+p {
+    color: #ddd;
+    line-height: 1.6;
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+    margin-top: 12px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.front {
+    background: #38bdf8;
+    color: #111827;
+}
+
+.back {
+    background: #a78bfa;
+    color: #111827;
+}
+
+.stop {
+    background: #ef4444;
+    color: white;
+}
+
+video {
+    width: 100%;
+    margin-top: 18px;
+    border-radius: 15px;
+    background: black;
+    display: none;
+}
+
+#status {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #86efac;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>तुम अपने बारे में कितना जानते हो?</h1>
+
+    <p>
+        इस पेज पर तुम अपनी अनुमति से
+        Front या Back Camera चालू कर सकते हो।
+        कैमरा चालू होने पर तुम्हें वीडियो दिखाई देगा।
+    </p>
+
+    <button class="front" onclick="startCamera('user')">
+        Front Camera चालू करो
+    </button>
+
+    <button class="back" onclick="startCamera('environment')">
+        Back Camera चालू करो
+    </button>
+
+    <video id="video" autoplay playsinline></video>
+
+    <button class="stop" onclick="stopCamera()">
+        Stop Camera
+    </button>
+
+    <div id="status">Camera बंद है</div>
+
+</div>
+
+<script>
+let stream = null;
+
+async function startCamera(mode) {
+    try {
+        stopCamera();
+
+        stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+                facingMode: mode
+            },
+            audio: false
+        });
+
+        const video = document.getElementById("video");
+        video.srcObject = stream;
+        video.style.display = "block";
+
+        document.getElementById("status").innerText =
+            "Camera चालू है";
+
+    } catch (error) {
+        document.getElementById("status").innerText =
+            "Camera permission नहीं मिली या camera उपलब्ध नहीं है।";
+    }
+}
+
+function stopCamera() {
+    if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        stream = null;
+    }
+
+    const video = document.getElementById("video");
+    video.srcObject = null;
+    video.style.display = "none";
+
+    document.getElementById("status").innerText =
+        "Camera बंद है";
+}
+</script>
+
+</body>
+</html>
